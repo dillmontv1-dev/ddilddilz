@@ -1,0 +1,2018 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>제4회 띨띨컵 - VIP구출작전</title>
+    <!-- 1. 더 안정적인 html2canvas 공식 배포판 라이브러리로 교체 -->
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Pretendard', 'Malgun Gothic', sans-serif;
+        }
+        
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: #121416;
+            color: #eeeeee;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        /* 헤더 영역 */
+        .header {
+            border-bottom: 3px solid #ffb300;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 25px;
+        }
+        
+        .header-logo {
+            height: 160px;
+            width: auto;
+            object-fit: contain;
+            border-radius: 6px;
+        }
+
+        .header-text-wrap {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+            align-items: center;
+            text-align: center;
+            margin-right: 120px;
+        }
+        
+        .badge {
+            display: inline-block;
+            background-color: #ffb300;
+            color: #000000;
+            font-weight: bold;
+            padding: 3px 8px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 2px;
+            width: fit-content;
+        }
+        
+        h1 {
+            color: #ffffff;
+            font-size: 100px;
+            margin: 0;
+            font-weight: 900;
+            letter-spacing: -1px;
+            line-height: 1.1;
+        }
+        
+        .sub-title {
+            color: #1a1c1e; 
+            font-size: 40px;
+            margin: 0;
+            font-weight: 900;
+            letter-spacing: 1px;
+            text-shadow: 
+                -1px -1px 0 #ff1744, 1px -1px 0 #ff1744, -1px 1px 0 #ff1744, 1px 1px 0 #ff1744, 
+                0 0 15px #ff1744, 
+                0 0 30px rgba(255, 23, 68, 0.6);
+        }
+        
+        .system-buttons {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        
+        .btn {
+            border: none;
+            padding: 10px 15px;
+            font-weight: bold;
+            font-size: 13px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-sm {
+            padding: 6px 10px;
+            font-size: 11.5px;
+            border-radius: 3px;
+        }
+        
+        .btn-yellow { background-color: #ffb300; color: #000000; white-space: nowrap; justify-content: center;}
+        .btn-yellow:hover { background-color: #ffa200; }
+        .btn-dark { background-color: #25292e; color: #ffffff; border: 1px solid #3d444b; }
+        .btn-dark:hover { background-color: #31363c; }
+        .btn-blue { background-color: #1565c0; color: #ffffff; }
+        .btn-blue:hover { background-color: #0d47a1; }
+        .btn-danger { background-color: #c62828; color: #ffffff; padding: 4px 8px; font-size: 11px; }
+        .btn-danger:hover { background-color: #b71c1c; }
+        .btn-success { background-color: #2e7d32; color: #ffffff; }
+        .btn-success:hover { background-color: #1b5e20; }
+        
+        /* 네비게이션 바 */
+        .top-bar {
+            margin-bottom: 25px;
+        }
+        
+        .summary-area {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 8px;
+            width: 100%;
+        }
+        
+        .summary-card {
+            background-color: #1e2225;
+            border: 1px solid #2d3238;
+            padding: 12px 6px;
+            text-align: center;
+            border-radius: 4px;
+            width: 100%;
+        }
+        
+        .summary-card.clickable {
+            cursor: pointer;
+            border-color: #ffb300;
+            transition: background 0.2s;
+        }
+        .summary-card.clickable:hover, .summary-card.clickable.active {
+            background-color: #25292e;
+            border-color: #ffb300;
+        }
+        .summary-card.clickable.active .summary-value {
+            color: #ffffff !important;
+        }
+        
+        .summary-label {
+            font-size: 11px;
+            color: #8a9096;
+            margin-bottom: 4px;
+        }
+        
+        .summary-value {
+            font-size: 14px;
+            font-weight: bold;
+            color: #ffb300;
+        }
+        
+        /* 기본 레이아웃 구성품 */
+        .form-section {
+            background-color: #1a1d20;
+            border: 1px solid #2d3238;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .form-section h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: #ffffff;
+            font-size: 16px;
+            border-left: 4px solid #ffb300;
+            padding-left: 8px;
+        }
+        
+        .form-grid {
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+        }
+        
+        .form-group input {
+            width: 100%;
+            background-color: #25292e;
+            border: 1px solid #3d444b;
+            color: #ffffff;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 14px;
+            outline: none;
+            height: 41px;
+        }
+        .form-group input:focus { border-color: #ffb300; }
+
+        .fg-broadcast { flex: 2.5; min-width: 150px; }
+        .fg-ingame { flex: 2.5; min-width: 150px; }
+        .fg-dmg-n { flex: 1.2; min-width: 80px; }
+        .fg-dmg-r { flex: 1.2; min-width: 80px; }
+        .fg-playtime { flex: 1.0; min-width: 80px; } 
+        .fg-btn-area { flex: 1.8; min-width: 120px; } 
+        
+        label {
+            display: block;
+            font-size: 12px;
+            color: #a0a5aa;
+            margin-bottom: 6px;
+            font-weight: bold;
+        }
+        
+        .input-mini {
+            width: 60px;
+            height: 30px;
+            padding: 4px;
+            text-align: center;
+            font-size: 13px;
+            display: inline-block;
+            background-color: #25292e;
+            border: 1px solid #3d444b;
+            color: #ffffff;
+            border-radius: 4px;
+        }
+        
+        .table-wrap {
+            background-color: #1a1d20;
+            border: 1px solid #2d3238;
+            border-radius: 6px;
+            padding: 24px;
+            margin-bottom: 25px;
+        }
+        
+        #capture-area {
+            background-color: #1a1d20;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        
+        .table-title {
+            margin: 0 0 15px 0;
+            color: #ffffff;
+            font-size: 18px;
+            border-left: 4px solid #ffb300;
+            padding-left: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+        
+        th {
+            background-color: #25292e;
+            color: #ffb300;
+            font-weight: bold;
+            text-align: center;
+            padding: 12px 10px;
+            font-size: 13px;
+            border-bottom: 2px solid #3d444b;
+        }
+        
+        td {
+            padding: 10px;
+            border-bottom: 1px solid #2d3238;
+            text-align: center;
+            font-size: 18px;
+            color: #dddddd;
+        }
+
+        #participant-tbody td, 
+        .final-table td {
+            text-align: center !important;
+        }
+        tr:hover { background-color: #212529; }
+        
+        .dmg-badge {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 15px;
+            font-weight: bold;
+            margin: 10px;
+        }
+        .dmg-normal { background-color: #2e7d32; color: #ffffff; }
+        .dmg-ranked { background-color: #c62828; color: #ffffff; }
+        
+        .team-badge-inline {
+            display: inline-block;
+            background-color: #2c2514;
+            border: 1px solid #ffb300;
+            color: #ffb300;
+            font-size: 15px;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+
+        .no-data { color: #747a80; padding: 40px !important; font-style: italic; }
+        #file-input { display: none; }
+
+        .page { display: none; }
+        .page.active { display: block; }
+
+        .teams-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .team-card {
+            background-color: #1a1d20;
+            border: 1px solid #2d3238;
+            border-top: 4px solid #ffb300;
+            border-radius: 6px;
+            padding: 15px;
+        }
+
+        .team-card h4 {
+            margin: 0 0 12px 0;
+            color: #ffb300;
+            font-size: 16px;
+            text-align: center;
+            border-bottom: 1px solid #2d3238;
+            padding-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .team-members-list { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 10px; 
+        }
+
+        .team-slot {
+            background-color: #23272c;
+            border: 1px solid #363c43;
+            padding: 10px 12px;
+            border-radius: 6px;
+            min-height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.2s ease;
+        }
+
+        .team-slot.vip-active {
+            background-color: #2f291a;
+            border-color: #ffb300;
+            box-shadow: 0 0 8px rgba(255,179,0,0.15);
+        }
+
+        .slot-empty { 
+            color: #6c757d; 
+            font-style: italic; 
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .vip-radio-label {
+            display: inline-flex;
+            align-items: center;
+            cursor: pointer;
+            position: relative;
+            user-select: none;
+            gap: 10px;
+            font-size: 15px; 
+            font-weight: 700;
+            color: #eeeeee;
+            flex: 1;
+        }
+
+        .vip-radio-label b {
+            color: #ffffff;
+            font-size: 15px;
+        }
+
+        .vip-radio-label input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+
+        .custom-radio {
+            height: 16px;
+            width: 16px;
+            background-color: #1c1f22;
+            border: 2px solid #525b64;
+            border-radius: 50%;
+            display: inline-block;
+            transition: all 0.2s ease;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .vip-radio-label:hover .custom-radio {
+            border-color: #ffb300;
+        }
+
+        .vip-radio-label input[type="radio"]:checked ~ .custom-radio {
+            background-color: #ffb300;
+            border-color: #ffb300;
+        }
+
+        .vip-radio-label input[type="radio"]:checked ~ .custom-radio::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #000000;
+        }
+
+        .round-team-block {
+            background-color: #1e2225;
+            border: 1px solid #2d3238;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            padding: 15px;
+        }
+        .round-team-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #2d3238;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .round-team-title-wrap { display: flex; align-items: center; gap: 15px; }
+        .round-team-title { font-size: 16px; font-weight: bold; color: #ffb300; }
+        .round-team-summary-tag {
+            background-color: #25292e;
+            border: 1px solid #ffb300;
+            color: #ffffff;
+            padding: 6px 14px;
+            border-radius: 4px;
+            font-size: 13.5px;
+            font-weight: bold;
+            display: inline-flex;
+            gap: 12px;
+        }
+        .round-team-meta { display: flex; gap: 15px; align-items: center; }
+        .team-assign-wrap { display: flex; gap: 4px; justify-content: center; align-items: center; }
+        select {
+            background-color: #25292e;
+            border: 1px solid #3d444b;
+            color: white;
+            padding: 6px 10px;
+            border-radius: 4px;
+            outline: none;
+            font-size: 13px;
+            height: 32px;
+            max-width: 160px;
+        }
+        select:disabled {
+            background-color: #15181b;
+            color: #666;
+            border-color: #222;
+        }
+        .vip-checkbox-label { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #ffb300; cursor: pointer; font-weight: bold; }
+        .vip-checkbox-label input { width: 16px; height: 16px; cursor: pointer; margin: 0; }
+
+        .leaderboard-wrap { margin-bottom: 30px; }
+        .leaderboard-capture-box { background-color: #1e2225; padding: 20px; border: 2px solid #ffb300; border-radius: 6px; }
+        
+        .rank-top5-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+            margin-top: 15px;
+        }
+        .rank-card {
+            background: linear-gradient(135deg, #25292e 0%, #1e2225 100%);
+            border: 1px solid #3d444b;
+            border-radius: 6px;
+            padding: 15px;
+            text-align: center;
+            position: relative;
+        }
+        .rank-card.rank-1 { border: 2px solid #ffb300; background: linear-gradient(135deg, #3a2f14 0%, #1e2225 100%); }
+        .rank-card.rank-2 { border: 1px solid #e5e5e5; }
+        .rank-card.rank-3 { border: 1px solid #cd7f32; }
+        .rank-number { font-size: 24px; font-weight: 900; color: #a0a5aa; margin-bottom: 5px; }
+        .rank-1 .rank-number { color: #ffb300; font-size: 28px; }
+        .rank-2 .rank-number { color: #e5e5e5; }
+        
+        .rank-card-team { font-size: 18px; font-weight: bold; color: #fff; margin-bottom: 8px;}
+        .rank-card-score { font-size: 14px; color: #00e676; font-weight: bold; }
+
+        .final-dashboard {
+            background-color: #111417;
+            border: 3px double #ffb300;
+            border-radius: 16px;
+            padding: 35px;
+            box-shadow: 0 0 40px rgba(0,0,0,0.8), inset 0 0 20px rgba(255,179,0,0.05);
+        }
+        
+        .podium-container {
+            display: flex;
+            flex-direction: column; 
+            gap: 28px;
+            margin-bottom: 35px;
+        }
+        
+        .podium-winner {
+            background: radial-gradient(circle at center, #3d2d05 0%, #17150e 60%, #111315 100%);
+            border: 3px solid #ffd54f; 
+            border-radius: 16px;
+            padding: 35px 25px 25px 25px; 
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 35px rgba(255, 179, 0, 0.4), inset 0 0 15px rgba(255, 179, 0, 0.2);
+            animation: winnerGlow 3s infinite alternate;
+        }
+
+        @keyframes winnerGlow {
+            0% { box-shadow: 0 0 25px rgba(255, 179, 0, 0.3), inset 0 0 10px rgba(255, 179, 0, 0.1); border-color: #ffb300; }
+            100% { box-shadow: 0 0 50px rgba(255, 213, 79, 0.6), inset 0 0 25px rgba(255, 213, 79, 0.3); border-color: #fff176; }
+        }
+
+        .podium-winner::before {
+            content: "🏆 GRAND CHAMPION";
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%); 
+            background: linear-gradient(135deg, #fff176 0%, #ffb300 100%);
+            color: #000;
+            font-size: 12px;
+            font-weight: 900;
+            padding: 4px 16px;
+            border-radius: 20px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            letter-spacing: 1px;
+        }
+
+        .podium-winner .podium-title { 
+            color: #ffca28; 
+            font-size: 14px; 
+            font-weight: 900; 
+            text-shadow: 0 0 8px rgba(255,179,0,0.5);
+            margin-top: 15px;
+            letter-spacing: 2px;
+        }
+        .podium-winner .podium-team { 
+            font-size: 54px; 
+            color: #ffffff; 
+            margin: 10px 0 5px 0;
+            font-weight: 900;
+            text-shadow: 0 4px 15px rgba(0,0,0,0.9), 0 0 10px rgba(255,213,79,0.3); 
+        }
+        .podium-winner .podium-score { 
+            font-size: 32px; 
+            color: #00e676; 
+            text-shadow: 0 0 12px rgba(0,230,118,0.5);
+            font-weight: 900;
+            margin-bottom: 15px;
+        }
+        
+        .podium-runner {
+            background: radial-gradient(circle at center, #1f272e 0%, #14191d 60%, #111417 100%);
+            border: 2px solid #b0bec5;
+            border-radius: 16px;
+            padding: 30px 25px 20px 25px; 
+            text-align: center; 
+            position: relative;
+            overflow: hidden;
+            display: block; 
+            box-shadow: 0 0 25px rgba(176, 190, 197, 0.2), inset 0 0 15px rgba(176, 190, 197, 0.05);
+            animation: runnerGlow 3s infinite alternate; 
+        }
+
+        @keyframes runnerGlow {
+            0% { box-shadow: 0 0 20px rgba(176, 190, 197, 0.15); border-color: #90a4ae; }
+            100% { box-shadow: 0 0 40px rgba(207, 216, 220, 0.4); border-color: #eceff1; }
+        }
+        
+        .podium-runner::before {
+            content: "🥈 HONORABLE RUNNER-UP";
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #ffffff 0%, #b0bec5 100%);
+            color: #111417;
+            font-size: 11px;
+            font-weight: 900;
+            padding: 4px 16px;
+            border-radius: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+            letter-spacing: 0.5px;
+        }
+        
+        .podium-runner .podium-title { 
+            display: block; 
+            color: #b0bec5; 
+            font-size: 13px; 
+            font-weight: bold;
+            margin-top: 15px;
+            letter-spacing: 1px;
+        }
+        
+        .podium-runner .podium-team { 
+            font-size: 40px; 
+            color: #ffffff; 
+            margin: 10px 0 5px 0; 
+            font-weight: 900;
+            text-shadow: 0 4px 12px rgba(0,0,0,0.8), 0 0 8px rgba(176,190,197,0.3); 
+        }
+        
+        .podium-runner .podium-score { 
+            font-size: 26px; 
+            color: #b0bec5; 
+            font-weight: 900;
+            text-shadow: 0 0 8px rgba(176,190,197,0.3);
+            margin-bottom: 12px;
+        }
+
+        .podium-members-wrap {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+            padding-top: 12px;
+            border-top: 1px dashed rgba(255, 255, 255, 0.1);
+        }
+
+        .podium-member-tag {
+            background-color: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 5px 12px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #e0e0e0;
+        }
+        .podium-winner .podium-member-tag {
+            border-color: rgba(255, 179, 0, 0.3);
+        }
+        .podium-member-tag.is-vip {
+            background-color: rgba(255, 179, 0, 0.15);
+            border-color: #ffb300;
+            color: #ffb300;
+            font-weight: bold;
+        }
+        
+        .special-award-box {
+            background: linear-gradient(90deg, #2a0b0b 0%, #141111 50%, #111417 100%);
+            border: 1px solid #2d2020;
+            border-left: 5px solid #ff5252; 
+            border-radius: 12px;
+            padding: 18px 30px;
+            margin-bottom: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        }
+        .special-left h4 { 
+            margin: 0 0 2px 0; 
+            color: #ff5252; 
+            font-size: 16px; 
+            font-weight: 900; 
+            letter-spacing: 0.5px;
+            text-shadow: 0 0 8px rgba(255,82,82,0.3);
+        }
+        .special-left p { margin: 0; font-size: 13px; color: #88929a; }
+        .special-right { text-align: right; }
+        .special-target-vip { 
+            font-size: 24px; 
+            font-weight: 900; 
+            color: #ffffff; 
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+        }
+        
+        .final-table th { 
+            background-color: #1a1e22; 
+            color: #ffb300; 
+            font-size: 17px; 
+            padding: 16px 12px;
+            font-weight: bold;
+        }
+        .final-table tr.row-1 { 
+            background: linear-gradient(90deg, rgba(255,179,0,0.1) 0%, rgba(255,179,0,0.01) 100%); 
+            border: 2px solid #ffb300; 
+        }
+        .final-table tr.row-2 { background-color: rgba(176,190,197,0.04); }
+        .final-table tr:hover { background-color: #1f2429; }
+        .score-total-cell { font-size: 18px; font-weight: 900; color: #00e676 !important; }
+
+        .main-title {
+            font-size: 100px;
+            font-weight: 900;
+            text-align: center;
+            margin: 20px 0;
+            letter-spacing: -0.5px;
+            background: linear-gradient(180deg, #ffe082 0%, #ffb300 40%, #ff8f00 70%, #ffb300 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.8));
+            text-shadow: 0 0 15px rgba(255, 179, 0, 0.4);
+        }
+
+    /* 딜량 색상 스타일 */
+    .dmg-gray { color: #888888; }
+    .dmg-green { color: #4caf50; }
+    .dmg-yellow { color: #ffeb3b; }
+    .dmg-red { color: #f44336; }
+    .dmg-rainbow {  color: #800080;}
+
+    </style>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+</head>
+<body>
+
+<!-- 2. 캡처 시 레이아웃 꼬임을 원천 차단하기 위해 전체를 id="wrapper" 로 감싸주었습니다 -->
+<div id="wrapper" class="container">
+    <!-- 헤더 바 -->
+    <div class="header">
+        <img src="로고.png" alt="로고" class="header-logo">
+        <div class="header-text-wrap">
+            <span class="badge">BATTLEGROUND STREAMER TOURNAMENT</span>
+            <h1 class="main-title">제4회 띨띨컵</h1>
+            <p class="sub-title">VIP를 구출작전</p>
+        </div>
+
+        <div class="system-buttons">
+            <button class="btn btn-blue btn-sm" onclick="captureTable()">📸 전체화면 저장</button>
+            <button class="btn btn-success btn-sm" onclick="saveInChunks()">📸 10명씩 분할 저장</button>
+            <button class="btn btn-dark btn-sm" onclick="exportData()">💾 내보내기</button>
+            <button class="btn btn-dark btn-sm" onclick="document.getElementById('file-input').click()">📂 불러오기</button>
+            <input type="file" id="file-input" accept=".txt,.json" onchange="importData(event)">
+        </div>
+    </div>
+
+    <!-- 네비게이션 탭 바 -->
+    <div class="top-bar">
+        <div class="summary-area">
+            <div id="nav-main-page" class="summary-card clickable active" onclick="switchPage('main-page')">
+                <div class="summary-label">신청현황</div>
+                <div class="summary-value" id="total-count">0 명</div>
+            </div>
+<div id="nav-tier-page" class="summary-card clickable" onclick="switchPage('tier-page')">
+    <div class="summary-label">참가인원</div>
+    <div class="summary-value">티어표</div>
+</div>
+            <div id="nav-team-page" class="summary-card clickable" onclick="switchPage('team-page')">
+                <div class="summary-label">대회 배치도</div>
+                <div class="summary-value">팀 목록 보기 ➔</div>
+            </div>
+            <div id="nav-r1-page" class="summary-card clickable" onclick="switchPage('r1-page')">
+                <div class="summary-label">ROUND 1</div>
+                <div class="summary-value">1라운드 경기</div>
+            </div>
+            <div id="nav-r2-page" class="summary-card clickable" onclick="switchPage('r2-page')">
+                <div class="summary-label">ROUND 2</div>
+                <div class="summary-value">2라운드 경기</div>
+            </div>
+            <div id="nav-r3-page" class="summary-card clickable" onclick="switchPage('r3-page')">
+                <div class="summary-label">ROUND 3</div>
+                <div class="summary-value">3라운드 경기</div>
+            </div>
+            <div id="nav-r4-page" class="summary-card clickable" onclick="switchPage('r4-page')">
+                <div class="summary-label">ROUND 4</div>
+                <div class="summary-value">4라운드 경기</div>
+            </div>
+            <div id="nav-final-page" class="summary-card clickable" style="border-color: #ffb300; background-color: rgba(255,179,0,0.05);" onclick="switchPage('final-page')">
+                <div class="summary-label" style="color:#ffb300; font-weight:bold;">🏆 FINAL</div>
+                <div class="summary-value" style="color:#fff;">종합 순위 보기</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE 1: 명단 관리 페이지 -->
+    <div id="main-page" class="page active">
+        <div class="form-section">
+            <h3>참가자 정보 추가</h3>
+            <form id="participant-form" onsubmit="addParticipant(event)">
+                <div class="form-grid">
+                    <div class="form-group fg-broadcast">
+                        <label>방송국 이름</label>
+                        <input type="text" id="broadcast-name" placeholder="예: 딜몬" required>
+                    </div>
+                    <div class="form-group fg-ingame">
+                        <label>인게임 ID</label>
+                        <input type="text" id="ingame-id" placeholder="예: SOOP_DILLMON_" required>
+                    </div>
+                    <div class="form-group fg-dmg-n">
+                        <label>일반 딜량</label>
+                        <input type="number" id="dmg-normal" placeholder="350" required>
+                    </div>
+                    <div class="form-group fg-dmg-r">
+                        <label>경쟁 딜량</label>
+                        <input type="number" id="dmg-ranked" placeholder="400" required>
+                    </div>
+                    <div class="form-group fg-playtime">
+                        <label>플레이타임 (시간)</label>
+                        <input type="number" id="play-time" placeholder="2500" required>
+                    </div>
+                    <div class="form-group fg-btn-area">
+                        <button type="submit" class="btn btn-yellow" style="height: 41px; width: 100%;">인원 추가 ➕</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="table-wrap">
+            <div id="capture-area">
+                <h3 class="table-title">제4회 띨띨컵 참가 확정 명단</h3>
+<button class="btn btn-danger" onclick="deleteAllParticipants()">전체 명단 삭제</button>
+                <table id="list-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 5%;">번호</th>
+                            <th style="width: 20%;">방송국 이름</th>
+                            <th style="width: 15%;">팀 배정 보내기</th>
+                            <th style="width: 15%;">티어</th>
+                            <th style="width: 22%;">인게임 ID</th>
+                            <th style="width: 15%;">딜량</th>
+                            <th style="width: 8%;">플레이타임</th>
+                            <th style="width: 5%;">관리</th>
+                        </tr>
+                    </thead>
+                    <tbody id="participant-tbody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+<!-- 새로운 티어 페이지 -->
+<div id="tier-page" class="page">
+    <div class="table-wrap">
+        <div class="table-title">참여인원 티어 분류 현황</div>
+        <div class="teams-grid" id="tier-container">
+            <!-- JS가 이곳에 1~4티어 목록을 그립니다 -->
+        </div>
+    </div>
+</div>
+    <!-- PAGE 2: 팀 목록 페이지 (배치도) -->
+    <div id="team-page" class="page">
+        <div class="table-wrap">
+            <div class="table-title">
+                제4회 띨띨컵 스쿼드 배치 현황 (총 13팀)
+                <button class="btn btn-danger" onclick="resetAllTeams()">전체 인원 초기화</button>
+            </div>
+            <div class="teams-grid" id="teams-container"></div>
+        </div>
+    </div>
+
+    <!-- ROUND PAGES -->
+    <div id="r1-page" class="page">
+        <div class="table-wrap">
+            <div class="table-title">
+                1 ROUND 경기 기록 세부 현황
+                <div style="display:flex; gap:8px;">
+                    <button class="btn btn-danger" onclick="resetRound(1)">점수 초기화</button>
+                    <button class="btn btn-yellow" onclick="toggleLeaderboard(1)">🏆 1라운드 결과보기(리더보드)</button>
+                </div>
+            </div>
+            <div id="leaderboard-area-1" class="leaderboard-wrap" style="display:none;"></div>
+            <div id="round-container-1"></div>
+        </div>
+    </div>
+    <div id="r2-page" class="page">
+        <div class="table-wrap">
+            <div class="table-title">
+                2 ROUND 경기 기록 세부 현황
+                <div style="display:flex; gap:8px;">
+                    <button class="btn btn-danger" onclick="resetRound(2)">점수 초기화</button>
+                    <button class="btn btn-yellow" onclick="toggleLeaderboard(2)">🏆 2라운드 결과보기(리더보드)</button>
+                </div>
+            </div>
+            <div id="leaderboard-area-2" class="leaderboard-wrap" style="display:none;"></div>
+            <div id="round-container-2"></div>
+        </div>
+    </div>
+    <div id="r3-page" class="page">
+        <div class="table-wrap">
+            <div class="table-title">
+                3 ROUND 경기 기록 세부 현황
+                <div style="display:flex; gap:8px;">
+                    <button class="btn btn-danger" onclick="resetRound(3)">점수 초기화</button>
+                    <button class="btn btn-yellow" onclick="toggleLeaderboard(3)">🏆 3라운드 결과보기(리더보드)</button>
+                </div>
+            </div>
+            <div id="leaderboard-area-3" class="leaderboard-wrap" style="display:none;"></div>
+            <div id="round-container-3"></div>
+        </div>
+    </div>
+    <div id="r4-page" class="page">
+        <div class="table-wrap">
+            <div class="table-title">
+                4 ROUND 경기 기록 세부 현황
+                <div style="display:flex; gap:8px;">
+                    <button class="btn btn-danger" onclick="resetRound(4)">점수 초기화</button>
+                    <button class="btn btn-yellow" onclick="toggleLeaderboard(4)">🏆 4라운드 결과보기(리더보드)</button>
+                </div>
+            </div>
+            <div id="leaderboard-area-4" class="leaderboard-wrap" style="display:none;"></div>
+            <div id="round-container-4"></div>
+        </div>
+    </div>
+
+    <!-- PAGE 6: 최종 대시보드 -->
+    <div id="final-page" class="page">
+        <div class="final-dashboard" id="final-dashboard-capture">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #ffb300; padding-bottom:15px; margin-bottom:25px;">
+                <h2 style="margin:0; color:#ffb300; font-size:24px; font-weight:900; letter-spacing:1px;">🏆 제4회 띨띨컵 대단원의 막: 최종 통합 종합순위</h2>
+                <button class="btn btn-success" onclick="captureFinalDashboard()">📸 최종 결과화면 이미지 저장</button>
+            </div>
+
+            <div class="podium-container">
+                <div class="podium-winner">
+                    <div class="podium-title">🥇 FINAL GRAND CHAMPION</div>
+                    <div class="podium-team" id="podium-1st-team">TEAM --</div>
+                    <div class="podium-score" id="podium-1st-score">-- 점</div>
+                    <div class="podium-members-wrap" id="podium-1st-members"></div>
+                </div>
+                <div class="podium-runner">
+                    <div class="podium-title">🥈 2ND PLACE RUNNER-UP</div>
+                    <div class="podium-team" id="podium-2nd-team">TEAM --</div>
+                    <div class="podium-score" id="podium-2nd-score">-- 점</div>
+                    <div class="podium-members-wrap" id="podium-2nd-members"></div>
+                </div>
+            </div>
+
+            <div class="special-award-box">
+                <div class="special-left">
+                    <h4>💀 VIP를 처참히 버린(?) 비운의 팀 특별상</h4>
+                    <p>대회 규정에 의거, 최종 최하위 순위 팀의 고생하신 VIP 유저를 표창합니다.</p>
+                </div>
+                <div class="special-right">
+                    <div style="font-size:11px; color:#aaa; margin-bottom:4px;" id="special-loser-team">최종 13등 팀</div>
+                    <div class="special-target-vip" id="special-loser-vip">VIP 유저명 확인 불가</div>
+                </div>
+            </div>
+
+            <table class="final-table">
+                <thead>
+                    <tr>
+                        <th style="width: 10%;">종합 순위</th>
+                        <th style="width: 16%;">팀 구분</th>
+                        <th style="width: 11%;">1R 점수</th>
+                        <th style="width: 11%;">2R 점수</th>
+                        <th style="width: 11%;">3R 점수</th>
+                        <th style="width: 11%;">4R 점수</th>
+                        <th style="width: 15%;">순수 누적 킬수</th>
+                        <th style="width: 15%; color:#00e676;">🔥 최종 합산 점수</th>
+                    </tr>
+                </thead>
+                <tbody id="final-total-tbody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    let participantList = [];
+    let teamData = {};
+    let teamVipSlots = {}; 
+    
+    for(let i=1; i<=13; i++) {
+        teamData[i] = [null, null, null, null];
+        teamVipSlots[i] = 0; 
+    }
+    let roundStats = { 1: {}, 2: {}, 3: {}, 4: {} };
+
+    window.onload = function() {
+        const savedMembers = localStorage.getItem("ddilcup4_members");
+        const savedTeams = localStorage.getItem("ddilcup4_teams");
+        const savedStats = localStorage.getItem("ddilcup4_round_stats");
+        const savedVipSlots = localStorage.getItem("ddilcup4_team_vips");
+
+        if (savedMembers) participantList = JSON.parse(savedMembers);
+        if (savedTeams) teamData = JSON.parse(savedTeams);
+        if (savedStats) roundStats = JSON.parse(savedStats);
+        if (savedVipSlots) teamVipSlots = JSON.parse(savedVipSlots);
+
+        for(let r=1; r<=4; r++){
+            for(let t=1; t<=13; t++){
+                if(!roundStats[r][t]) {
+                    roundStats[r][t] = { rank: "", vipAlive: true, pStats: [ {k:0, a:0}, {k:0, a:0}, {k:0, a:0}, {k:0, a:0} ] };
+                }
+            }
+        }
+
+        renderTable();
+        renderTeamGrid();
+        renderAllRoundPages();
+renderTierPage();
+    };
+
+    function saveAllToLocalStorage() {
+        localStorage.setItem("ddilcup4_members", JSON.stringify(participantList));
+        localStorage.setItem("ddilcup4_teams", JSON.stringify(teamData));
+        localStorage.setItem("ddilcup4_round_stats", JSON.stringify(roundStats));
+        localStorage.setItem("ddilcup4_team_vips", JSON.stringify(teamVipSlots));
+    }
+
+    function switchPage(pageId) {
+        document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+        document.querySelectorAll('.summary-card.clickable').forEach(nav => nav.classList.remove('active'));
+        
+        document.getElementById(pageId).classList.add('active');
+        document.getElementById('nav-' + pageId).classList.add('active');
+
+        if(pageId === 'final-page') {
+            calculateAndRenderFinalDashboard();
+        }
+    }
+
+    function calculateScoreDetails(rank, vipAlive) {
+        let rScore = 0;
+        let vScore = 0;
+        const r = parseInt(rank);
+        if(!isNaN(r) && r >= 1 && r <= 10) { rScore = 11 - r; }
+        if(vipAlive && !isNaN(r)) {
+            if(r === 1) vScore = 15;
+            else if(r === 2) vScore = 12;
+            else if(r === 3) vScore = 10;
+            else if(r === 4) vScore = 8;
+            else if(r === 5) vScore = 5;
+        }
+        return { rankScore: rScore, vipScore: vScore };
+    }
+
+    function renderPodiumMembers(teamNum, targetElementId) {
+        const targetDiv = document.getElementById(targetElementId);
+        if(!targetDiv) return;
+        
+        targetDiv.innerHTML = '';
+        const members = teamData[teamNum];
+        const vipIdx = teamVipSlots[teamNum];
+
+        for(let s=0; s<4; s++) {
+            const m = members[s];
+            const isVip = (s === vipIdx);
+            const tag = document.createElement('span');
+            
+            if(m) {
+                tag.className = isVip ? 'podium-member-tag is-vip' : 'podium-member-tag';
+                tag.innerText = isVip ? `👑 VIP : ${m.broadcastName}` : m.broadcastName;
+            } else {
+                tag.className = 'podium-member-tag';
+                tag.style.color = '#555';
+                tag.innerText = isVip ? `👑 VIP : (미지정)` : `(비어있음)`;
+            }
+            targetDiv.appendChild(tag);
+        }
+    }
+
+    function calculateAndRenderFinalDashboard() {
+        let teamAggregates = [];
+
+        for(let t=1; t<=13; t++) {
+            let rowBreakdown = { teamNum: t, r1: 0, r2: 0, r3: 0, r4: 0, totalKills: 0, finalTotal: 0 };
+            
+            for(let r=1; r<=4; r++) {
+                const config = roundStats[r][t];
+                let tk = 0;
+                for(let s=0; s<4; s++) { tk += (config.pStats[s].k || 0); }
+                
+                const scoreDetails = calculateScoreDetails(config.rank, config.vipAlive);
+                const rTotal = tk + scoreDetails.rankScore + scoreDetails.vipScore;
+
+                rowBreakdown['r'+r] = rTotal;
+                rowBreakdown.totalKills += tk;
+                rowBreakdown.finalTotal += rTotal;
+            }
+            teamAggregates.push(rowBreakdown);
+        }
+
+        teamAggregates.sort((a, b) => {
+            if(b.finalTotal !== a.finalTotal) return b.finalTotal - a.finalTotal;
+            return b.totalKills - a.totalKills;
+        });
+
+        const firstTeam = teamAggregates[0];
+        const secondTeam = teamAggregates[1];
+        const lastTeam = teamAggregates[teamAggregates.length - 1]; 
+
+        document.getElementById('podium-1st-team').innerText = `TEAM ${String(firstTeam.teamNum).padStart(2, '0')}`;
+        document.getElementById('podium-1st-score').innerText = `🏆 종합 ${firstTeam.finalTotal}점`;
+        renderPodiumMembers(firstTeam.teamNum, 'podium-1st-members');
+
+        document.getElementById('podium-2nd-team').innerText = `TEAM ${String(secondTeam.teamNum).padStart(2, '0')}`;
+        document.getElementById('podium-2nd-score').innerText = `🥈 종합 ${secondTeam.finalTotal}점`;
+        renderPodiumMembers(secondTeam.teamNum, 'podium-2nd-members');
+
+        document.getElementById('special-loser-team').innerText = `최종 13위 : TEAM ${String(lastTeam.teamNum).padStart(2, '0')}`;
+        
+        const vipSlotIdx = teamVipSlots[lastTeam.teamNum];
+        const loserVipUser = teamData[lastTeam.teamNum][vipSlotIdx]; 
+        if(loserVipUser) {
+            document.getElementById('special-loser-vip').innerText = `👑 ${loserVipUser.broadcastName} (${loserVipUser.ingameId})`;
+        } else {
+            document.getElementById('special-loser-vip').innerText = `👑 명단 미지정 (비어있음)`;
+        }
+
+        const tbody = document.getElementById('final-total-tbody');
+        tbody.innerHTML = '';
+
+        teamAggregates.forEach((t, idx) => {
+            const tr = document.createElement('tr');
+            tr.className = `row-${idx+1}`;
+            
+            let rankBadge = `${idx+1}위`;
+            if(idx === 0) rankBadge = "🥇 1위 <P>(우승)</P>";
+            if(idx === 1) rankBadge = "🥈 2위 <P>(준우승)</P>";
+            if(idx === 12) rankBadge = "💀 13위 <P>(꼴등)</P>";
+
+            tr.innerHTML = `
+                <td style="font-weight:bold; color:${idx===0?'#ffb300':idx===1?'#b0bec5':idx===12?'#ff4444':'#fff'}">${rankBadge}</td>
+                <td style="color:#ffb300; font-weight:bold; font-size:20px;">TEAM ${String(t.teamNum).padStart(2, '0')}</td>
+                <td>${t.r1} 점</td>
+                <td>${t.r2} 점</td>
+                <td>${t.r3} 점</td>
+                <td>${t.r4} 점</td>
+                <td style="color:#aaa;">총 ${t.totalKills} 킬</td>
+                <td class="score-total-cell">${t.finalTotal} 점</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function renderTable() {
+    const tbody = document.getElementById('participant-tbody');
+    document.getElementById('total-count').innerText = participantList.length + " 명";
+
+    if (participantList.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" class="no-data">등록된 참가자가 없습니다.</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = '';
+    participantList.forEach((p, idx) => {
+        // [수정] 기본값을 빈 값('')으로 설정하여 '선택'이 기본값이 되도록 함
+        const currentTier = p.tier || '';
+
+        let assignedBadgeHtml = ""; 
+        let myAssignedKey = ""; 
+        
+        for(let t=1; t<=13; t++) {
+            for(let s=0; s<4; s++) {
+                if(teamData[t][s] && teamData[t][s].ingameId === p.ingameId) {
+                    assignedBadgeHtml = `<span class="team-badge-inline">TEAM ${String(t).padStart(2, '0')} (${s+1}번)</span>`;
+                    myAssignedKey = `${t}-${s}`;
+                }
+            }
+        }
+
+        let selectOptionsHtml = `<option value="">-- 팀 선택 --</option>`;
+        if(myAssignedKey !== "") {
+            selectOptionsHtml += `<option value="CLEAR" style="color: #ff4444; font-weight:bold;">❌ 배정 취소/해제</option>`;
+        }
+
+        for(let i=1; i<=13; i++) {
+            for(let slot=0; slot<4; slot++) {
+                const optionValue = `${i}-${slot}`;
+                const targetOccupant = teamData[i][slot];
+                
+                if (targetOccupant) {
+                    if (targetOccupant.ingameId === p.ingameId) {
+                        selectOptionsHtml += `<option value="${optionValue}" selected>${i}팀 ${slot+1}번 (내 자리)</option>`;
+                    } else {
+                        selectOptionsHtml += `<option value="${optionValue}" disabled>${i}팀 ${slot+1}번 (${targetOccupant.broadcastName})</option>`;
+                    }
+                } else {
+                    selectOptionsHtml += `<option value="${optionValue}">${i}팀 ${slot+1}번</option>`;
+                }
+            }
+        }
+
+        const row = document.createElement('tr');
+        row.id = `participant-row-${idx}`; 
+        row.innerHTML = `
+            <td>${idx + 1}</td>
+            <td style="text-align: left; font-weight: bold; color: #fff;">
+                ${p.broadcastName}${assignedBadgeHtml}
+            </td>
+            <td>
+                <div class="team-assign-wrap">
+                    <select onchange="directAssignFromList(${idx}, this.value)">
+                        ${selectOptionsHtml}
+                    </select>
+                </div>
+            </td>
+            <td>
+                <select onchange="updateTier(${idx}, this.value)">
+                    <option value="" ${currentTier === '' ? 'selected' : ''}>-- 선택 --</option>
+                    <option value="1티어" ${currentTier === '1티어' ? 'selected' : ''}>1티어</option>
+                    <option value="2티어" ${currentTier === '2티어' ? 'selected' : ''}>2티어</option>
+                    <option value="3티어" ${currentTier === '3티어' ? 'selected' : ''}>3티어</option>
+                    <option value="4티어" ${currentTier === '4티어' ? 'selected' : ''}>4티어</option>
+                </select>
+            </td>
+            <td style="text-align:left;">${p.ingameId}</td>
+            <td>
+                <span class="dmg-badge dmg-normal">일반 ${p.dmgNormal}</span>
+                <span class="dmg-badge dmg-ranked">경쟁 ${p.dmgRanked}</span>
+            </td>
+            <td>${p.playTime}H</td>
+            <td>
+                <div style="display:flex; gap:4px; justify-content:center;">
+                    <button class="btn btn-blue" style="padding:3px 6px; font-size:11px;" onclick="editParticipant(${idx})">✏️</button>
+                    <button class="btn btn-danger" style="padding:3px 6px;" onclick="deleteParticipant(${idx})">X</button>
+                </div>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+    function editParticipant(idx) {
+        const p = participantList[idx];
+        const row = document.getElementById(`participant-row-${idx}`);
+        
+        row.innerHTML = `
+            <td>${idx + 1}</td>
+            <td><input type="text" id="edit-edit-broadcast-${idx}" class="input-mini" style="width:60%; text-align:left; padding:4px 8px; height:30px;" value="${p.broadcastName}"></td>
+            <td><span style="color:#6c757d; font-size:17px;">내용</span></td>
+            <td><span style="color:#6c757d; font-size:17px;">수정 중...</span></td>
+            <td><input type="text" id="edit-edit-ingame-${idx}" class="input-mini" style="width:60%; text-align:left; padding:4px 8px; height:30px;" value="${p.ingameId}"></td>
+            <td>
+                <input type="number" id="edit-edit-dmgn-${idx}" class="input-mini" style="width:80px; height:30px; margin-right:2px;" value="${p.dmgNormal}">
+                <input type="number" id="edit-edit-dmgr-${idx}" class="input-mini" style="width:80px; height:30px;" value="${p.dmgRanked}">
+            </td>
+            <td><input type="number" id="edit-edit-time-${idx}" class="input-mini" style="width:80px; height:30px;" value="${p.playTime}"></td>
+            <td>
+                <div style="display:flex; gap:4px; justify-content:center;">
+                    <button class="btn btn-success" style="padding:3px 6px; font-size:11px; font-weight:bold;" onclick="saveEdit(${idx})">저장</button>
+                    <button class="btn btn-dark" style="padding:3px 6px; font-size:11px;" onclick="cancelEdit()">취소</button>
+                </div>
+            </td>
+        `;
+    }
+
+    function saveEdit(idx) {
+        const oldIngameId = participantList[idx].ingameId; 
+        
+        const newBroadcast = document.getElementById(`edit-edit-broadcast-${idx}`).value.trim();
+        const newIngame = document.getElementById(`edit-edit-ingame-${idx}`).value.trim();
+        const newDmgN = parseInt(document.getElementById(`edit-edit-dmgn-${idx}`).value) || 0;
+        const newDmgR = parseInt(document.getElementById(`edit-edit-dmgr-${idx}`).value) || 0;
+        const newTime = parseInt(document.getElementById(`edit-edit-time-${idx}`).value) || 0;
+
+        if(!newBroadcast || !newIngame) {
+            alert("방송국 이름과 인게임 ID는 비워둘 수 없습니다.");
+            return;
+        }
+
+        participantList[idx] = {
+            broadcastName: newBroadcast,
+            ingameId: newIngame,
+            dmgNormal: newDmgN,
+            dmgRanked: newDmgR,
+            playTime: newTime
+        };
+
+        for(let t=1; t<=13; t++) {
+            for(let s=0; s<4; s++) {
+                if(teamData[t][s] && teamData[t][s].ingameId === oldIngameId) {
+                    teamData[t][s] = participantList[idx];
+                }
+            }
+        }
+
+        saveAllToLocalStorage();
+        renderTable();
+        renderTeamGrid();
+        renderAllRoundPages();
+    }
+
+    function cancelEdit() {
+        renderTable();
+    }
+
+    function directAssignFromList(pIdx, targetValue) {
+        const selectedUser = participantList[pIdx];
+
+        if(targetValue === "CLEAR" || targetValue === "") {
+            for(let t=1; t<=13; t++) {
+                for(let s=0; s<4; s++) {
+                    if(teamData[t][s] && teamData[t][s].ingameId === selectedUser.ingameId) {
+                        teamData[t][s] = null;
+                    }
+                }
+            }
+            saveAllToLocalStorage();
+            renderTable();
+            renderTeamGrid();
+            renderAllRoundPages();
+            return;
+        }
+
+        const [teamNum, slotNum] = targetValue.split('-').map(Number);
+
+        for(let t=1; t<=13; t++) {
+            for(let s=0; s<4; s++) {
+                if(teamData[t][s] && teamData[t][s].ingameId === selectedUser.ingameId) {
+                    teamData[t][s] = null;
+                }
+            }
+        }
+
+        teamData[teamNum][slotNum] = selectedUser;
+        
+        saveAllToLocalStorage();
+        renderTable();
+        renderTeamGrid();
+        renderAllRoundPages();
+    }
+
+    function addParticipant(event) {
+        event.preventDefault();
+        const broadcastName = document.getElementById('broadcast-name').value;
+        const ingameId = document.getElementById('ingame-id').value;
+        const dmgNormal = parseInt(document.getElementById('dmg-normal').value);
+        const dmgRanked = parseInt(document.getElementById('dmg-ranked').value);
+        const playTime = parseInt(document.getElementById('play-time').value);
+
+        participantList.push({ broadcastName, ingameId, dmgNormal, dmgRanked, playTime });
+        saveAllToLocalStorage();
+        
+        document.getElementById('participant-form').reset();
+        
+        renderTable();
+        renderTeamGrid();
+        renderAllRoundPages();
+
+        const broadcastInput = document.getElementById('broadcast-name'); 
+        if (broadcastInput) {
+            broadcastInput.focus();    
+        }
+    }
+
+    function deleteParticipant(index) {
+        if(confirm("이 참가자를 완전히 삭제합니까?")) {
+            const target = participantList[index];
+            for(let t=1; t<=13; t++) {
+                for(let s=0; s<4; s++) {
+                    if(teamData[t][s] && teamData[t][s].ingameId === target.ingameId) teamData[t][s] = null;
+                }
+            }
+            participantList.splice(index, 1);
+            saveAllToLocalStorage();
+            renderTable();
+            renderTeamGrid();
+            renderAllRoundPages();
+        }
+    }
+
+    function renderTeamGrid() {
+        const container = document.getElementById('teams-container');
+        container.innerHTML = '';
+
+        for (let i = 1; i <= 13; i++) {
+            const teamCard = document.createElement('div');
+            teamCard.className = 'team-card';
+            
+            let slotsHtml = `<h4 style="margin-bottom:10px;">TEAM ${String(i).padStart(2, '0')}</h4><div class="team-members-list">`;
+            
+            for (let slot = 0; slot < 4; slot++) {
+                const currentMember = teamData[i][slot];
+                const isVip = teamVipSlots[i] === slot;
+                const labelVip = isVip ? "👑 " : "";
+                const checkedAttr = isVip ? "checked" : "";
+                const vipClass = isVip ? "vip-active" : "";
+
+                if(currentMember) {
+                    slotsHtml += `
+                        <div class="team-slot ${vipClass}">
+                            <label class="vip-radio-label">
+                                <input type="radio" name="team-vip-${i}" ${checkedAttr} onchange="setTeamVip(${i}, ${slot})">
+                                <span class="custom-radio"></span>
+                                <span>${slot+1}. <b>${labelVip}${currentMember.broadcastName}</b></span>
+                            </label>
+                            <button class="btn btn-danger" style="padding:3px 7px; font-size:11px;" onclick="removeMemberFromTeam(${i}, ${slot})">제거</button>
+                        </div>`;
+                } else {
+                    slotsHtml += `
+                        <div class="team-slot ${vipClass}">
+                            <label class="vip-radio-label slot-empty">
+                                <span style="display:flex; align-items:center; gap:10px;">
+                                    <input type="radio" name="team-vip-${i}" ${checkedAttr} onchange="setTeamVip(${i}, ${slot})">
+                                    <span class="custom-radio"></span>
+                                    <span style="color:#6c757d; font-size:14px; font-weight:normal;">${slot+1}. ${labelVip}비어있음</span>
+                                </span>
+                            </label>
+                        </div>`;
+                }
+            }
+            slotsHtml += '</div>';
+            teamCard.innerHTML = slotsHtml;
+            container.appendChild(teamCard);
+        }
+    }
+
+    function setTeamVip(teamNum, slotNum) {
+        teamVipSlots[teamNum] = slotNum;
+        saveAllToLocalStorage();
+        renderTeamGrid();
+        renderAllRoundPages();
+    }
+
+    function removeMemberFromTeam(teamNum, slotNum) {
+        teamData[teamNum][slotNum] = null;
+        saveAllToLocalStorage();
+        renderTable();
+        renderTeamGrid();
+        renderAllRoundPages();
+    }
+
+    function renderAllRoundPages() {
+        for(let r=1; r<=4; r++) renderRoundPage(r);
+    }
+
+    function renderRoundPage(roundNum) {
+        const targetContainer = document.getElementById(`round-container-${roundNum}`);
+        if(!targetContainer) return;
+        targetContainer.innerHTML = '';
+
+        for(let t=1; t<=13; t++) {
+            const teamBlock = document.createElement('div');
+            teamBlock.className = 'round-team-block';
+
+            const currentTeamConfig = roundStats[roundNum][t];
+            
+            let totalKills = 0;
+            let totalAssists = 0;
+            for(let s=0; s<4; s++) {
+                totalKills += (currentTeamConfig.pStats[s].k || 0);
+                totalAssists += (currentTeamConfig.pStats[s].a || 0);
+            }
+
+            const scoreDetails = calculateScoreDetails(currentTeamConfig.rank, currentTeamConfig.vipAlive);
+            const finalTotalScore = totalKills + scoreDetails.rankScore + scoreDetails.vipScore;
+
+            const summaryBadgeHtml = `
+                <span class="round-team-summary-tag">
+                    🔥 [ 킬( ${totalKills}점 ) + 순위( ${currentTeamConfig.rank ? currentTeamConfig.rank+'등:'+scoreDetails.rankScore+'점' : '0점'} ) + VIP( ${currentTeamConfig.vipAlive ? scoreDetails.vipScore+'점' : '사망:0점'} ) = 총합 ${finalTotalScore}점 ]
+                </span>
+            `;
+            
+            let headerHtml = `
+                <div class="round-team-header">
+                    <div class="round-team-title-wrap">
+                        <div class="round-team-title">TEAM ${String(t).padStart(2, '0')}</div>
+                        ${summaryBadgeHtml}
+                    </div>
+                    <div class="round-team-meta">
+                        <label class="vip-checkbox-label">
+                            <input type="checkbox" ${currentTeamConfig.vipAlive ? 'checked' : ''} onchange="updateRoundMeta(${roundNum}, ${t}, 'vipAlive', this.checked)">
+                            👑 VIP 생존
+                        </label>
+                        <div>
+                            <select onchange="updateRoundMeta(${roundNum}, ${t}, 'rank', this.value)">
+                                <option value="">순위 선택</option>
+                                ${Array.from({length: 13}, (_, i) => `<option value="${i+1}" ${currentTeamConfig.rank == i+1 ? 'selected' : ''}>${i+1} 등</option>`).join('')}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            let tableHtml = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 10%;">위치</th>
+                            <th style="width: 35%;">방송국명</th>
+                            <th style="width: 35%;">인게임 ID</th>
+                            <th style="width: 10%;">킬 (Kill)</th>
+                            <th style="width: 10%;">어시스트 (Asst)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            const vipSlotIdx = teamVipSlots[t];
+
+            for(let slot=0; slot<4; slot++) {
+                const member = teamData[t][slot];
+                const pStat = currentTeamConfig.pStats[slot];
+                const labelVip = slot === vipSlotIdx ? "👑 VIP" : `팀원 ${slot+1}`;
+                
+                if(member) {
+                    tableHtml += `
+                        <tr>
+                            <td style="${slot === vipSlotIdx ? 'color:#ffb300; font-weight:bold;' : ''}">${labelVip}</td>
+                            <td style="color:#fff; font-weight:bold; text-align:left;">${member.broadcastName}</td>
+                            <td style="text-align:left; color:#ccc;">${member.ingameId}</td>
+                            <td><input type="number" class="input-mini" value="${pStat.k}" min="0" onchange="updatePlayerStat(${roundNum}, ${t}, ${slot}, 'k', this.value)"></td>
+                            <td><input type="number" class="input-mini" value="${pStat.a}" min="0" onchange="updatePlayerStat(${roundNum}, ${t}, ${slot}, 'a', this.value)"></td>
+                        </tr>
+                    `;
+                } else {
+                    tableHtml += `
+                        <tr>
+                            <td>${labelVip}</td>
+                            <td colspan="4" class="no-data" style="padding:6px !important; font-size:11px;">[신청현황] 탭에서 명단을 배정하면 자동 연동됩니다.</td>
+                        </tr>
+                    `;
+                }
+            }
+
+            tableHtml += `</tbody></table>`;
+            teamBlock.innerHTML = headerHtml + tableHtml;
+            targetContainer.appendChild(teamBlock);
+        }
+        
+        const lbArea = document.getElementById(`leaderboard-area-${roundNum}`);
+        if (lbArea && lbArea.style.display === 'block') {
+            generateLeaderboard(roundNum);
+        }
+    }
+
+    function toggleLeaderboard(roundNum) {
+        const lbArea = document.getElementById(`leaderboard-area-${roundNum}`);
+        if(lbArea.style.display === 'none') {
+            generateLeaderboard(roundNum);
+            lbArea.style.display = 'block';
+        } else {
+            lbArea.style.display = 'none';
+        }
+    }
+
+    function generateLeaderboard(roundNum) {
+        const lbArea = document.getElementById(`leaderboard-area-${roundNum}`);
+        if(!lbArea) return;
+
+        let sortedTeams = [];
+        for(let t=1; t<=13; t++) {
+            const config = roundStats[roundNum][t];
+            let tk = 0, ta = 0;
+            for(let s=0; s<4; s++) {
+                tk += (config.pStats[s].k || 0);
+                ta += (config.pStats[s].a || 0);
+            }
+            const scoreDetails = calculateScoreDetails(config.rank, config.vipAlive);
+            const totalScore = tk + scoreDetails.rankScore + scoreDetails.vipScore;
+
+            sortedTeams.push({
+                teamNum: t, rank: config.rank ? parseInt(config.rank) : 999,
+                kills: tk, assists: ta, vipAlive: config.vipAlive,
+                rankScore: scoreDetails.rankScore, vipScore: scoreDetails.vipScore, totalScore: totalScore
+            });
+        }
+
+        sortedTeams.sort((a, b) => {
+            if(b.totalScore !== a.totalScore) return b.totalScore - a.totalScore;
+            return b.kills - a.kills;
+        });
+
+        let top5Html = '<div class="rank-top5-container">';
+        for(let i=0; i<5; i++) {
+            const t = sortedTeams[i];
+            top5Html += `
+                <div class="rank-card rank-${i+1}">
+                    <div class="rank-number">${i+1}위</div>
+                    <div class="rank-card-team">TEAM ${String(t.teamNum).padStart(2, '0')}</div>
+                    <div class="rank-card-score">🏆 종합 ${t.totalScore}점</div>
+                </div>
+            `;
+        }
+        top5Html += '</div>';
+
+        let tableHtml = `<table class="leaderboard-table"><thead><tr><th>순위</th><th>팀구분</th><th>점수</th><th>킬</th><th>순위배점</th><th>VIP생존</th></tr></thead><tbody>`;
+        sortedTeams.forEach((t, idx) => {
+            tableHtml += `
+                <tr>
+                    <td><b>${idx + 1}등</b></td>
+                    <td style="color:#ffb300; font-weight:bold;">TEAM ${String(t.teamNum).padStart(2, '0')}</td>
+                    <td style="color:#00e676; font-weight:bold;">${t.totalScore} 점</td>
+                    <td>${t.kills}킬</td>
+                    <td>${t.rankScore}점</td>
+                    <td style="color:#ffb300">${t.vipScore}점</td>
+                </tr>
+            `;
+        });
+        tableHtml += '</tbody></table>';
+        lbArea.innerHTML = `<div class="leaderboard-capture-box"><h4>🏆 ROUND ${roundNum} 리더보드</h4>${top5Html}${tableHtml}</div>`;
+    }
+
+    function updateRoundMeta(roundNum, teamNum, key, value) {
+        roundStats[roundNum][teamNum][key] = value;
+        saveAllToLocalStorage();
+        renderRoundPage(roundNum);
+    }
+
+    function updatePlayerStat(roundNum, teamNum, slotNum, key, value) {
+        roundStats[roundNum][teamNum].pStats[slotNum][key] = parseInt(value) || 0;
+        saveAllToLocalStorage();
+        renderRoundPage(roundNum);
+    }
+
+    function captureFinalDashboard() {
+        const target = document.getElementById('final-dashboard-capture');
+        window.html2canvas(target, { backgroundColor: '#16191c', scale: 2.0, useCORS: true }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = `제4회_띨띨컵_최종_대회_통합결과.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        });
+    }
+
+    function captureTable() {
+        const activePage = document.querySelector('.page.active');
+        window.html2canvas(activePage, { backgroundColor: '#121416', scale: 1.5, useCORS: true }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = `스코어보드_현황화면.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        });
+    }
+
+    function exportData() {
+        const integratedData = { members: participantList, teams: teamData, stats: roundStats, vips: teamVipSlots };
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(integratedData, null, 2));
+        const downloadAnchor = document.createElement('a');
+        downloadAnchor.setAttribute("href", dataStr);
+        downloadAnchor.setAttribute("download", "dillcup4_full_database.json");
+        document.body.appendChild(downloadAnchor);
+        downloadAnchor.click();
+        downloadAnchor.remove();
+    }
+
+    function importData(event) {
+        const input = event.target;
+        const reader = new FileReader();
+        reader.onload = function() {
+            try {
+                const parsed = JSON.parse(reader.result);
+                if(parsed.members && parsed.teams && parsed.stats) {
+                    participantList = parsed.members;
+                    teamData = parsed.teams;
+                    roundStats = parsed.stats;
+                    if(parsed.vips) teamVipSlots = parsed.vips;
+                    saveAllToLocalStorage();
+                    renderTable();
+                    renderTeamGrid();
+                    renderAllRoundPages();
+                    alert("데이터 동기화가 완료되었습니다!");
+                }
+            } catch(e) { alert("파일 오류"); }
+        };
+        if(input.files[0]) reader.readAsText(input.files[0]);
+        input.value = '';
+    }
+
+    function resetAllTeams() {
+        if (!confirm("모든 팀 배정을 초기화하시겠습니까?")) return;
+
+        for (let t = 1; t <= 13; t++) {
+            teamData[t] = [null, null, null, null];
+            teamVipSlots[t] = 0;
+        }
+
+        saveAllToLocalStorage();
+        renderTable();
+        renderTeamGrid();
+        renderAllRoundPages();
+if (typeof renderTierPage === 'function') {
+        renderTierPage();
+    }
+        alert("모든 팀원이 초기화되었습니다.");
+    }
+
+    function resetRound(roundNum) {
+        if (!confirm(roundNum + "라운드 점수를 모두 초기화하시겠습니까?")) return;
+
+        for (let t = 1; t <= 13; t++) {
+            roundStats[roundNum][t] = {
+                rank: "",
+                vipAlive: true,
+                pStats: [
+                    { k: 0, a: 0 },
+                    { k: 0, a: 0 },
+                    { k: 0, a: 0 },
+                    { k: 0, a: 0 }
+                ]
+            };
+        }
+
+        saveAllToLocalStorage();
+        renderRoundPage(roundNum);
+
+        const lb = document.getElementById(`leaderboard-area-${roundNum}`);
+        if (lb && lb.style.display === "block") {
+            generateLeaderboard(roundNum);
+        }
+
+        calculateAndRenderFinalDashboard();
+        alert(roundNum + "라운드 점수가 초기화되었습니다.");
+    }
+
+    /* 3. 비동기 오류 및 팝업 차단을 철저하게 막아주는 고성능 분할 저장 프로세스로 교체 */
+    function saveInChunks() {
+        if (!window.html2canvas) {
+            alert("이미지 저장 라이브러리(html2canvas)가 로드되지 않았습니다.");
+            return;
+        }
+
+        const tbody = document.getElementById('participant-tbody');
+        if (!tbody) return;
+
+        const allRows = Array.from(tbody.querySelectorAll('tr'));
+        if (allRows.length === 0 || allRows[0].querySelector('.no-data')) {
+            alert("저장할 참가자 명단이 없습니다.");
+            return;
+        }
+
+        try {
+            const chunkSize = 10;
+            const totalChunks = Math.ceil(allRows.length / chunkSize);
+            
+            alert(`총 ${totalChunks}장의 명단 이미지 분할 다운로드를 시작합니다.`);
+
+            let currentChunk = 0;
+
+            function captureNext() {
+                if (currentChunk >= totalChunks) {
+                    // 완료 후 무조건 복구
+                    allRows.forEach(row => row.style.display = '');
+                    alert("모든 분할 파일 저장이 완료되었습니다! ✨");
+                    return;
+                }
+
+                const startIdx = currentChunk * chunkSize;
+                const endIdx = startIdx + chunkSize;
+
+                // 10명만 필터하여 남기기
+                allRows.forEach((row, idx) => {
+                    if (idx >= startIdx && idx < endIdx) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+
+                // 감싸고 있는 실제 아이디 객체 바인딩
+                const captureTarget = document.getElementById('wrapper');
+
+                setTimeout(() => {
+                    window.html2canvas(captureTarget, {
+                        backgroundColor: "#121416",
+                        scale: 2,
+                        useCORS: true
+                    }).then(canvas => {
+                        const link = document.createElement('a');
+                        link.download = `제4회_띨띨컵_명단_${startIdx + 1}번~${Math.min(endIdx, allRows.length)}번.png`;
+                        link.href = canvas.toDataURL('image/png');
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+
+                        currentChunk++;
+                        captureNext(); // 연속 재귀 호출
+                    }).catch(err => {
+                        alert(`캡처 오류 발생: ${err.message}`);
+                        allRows.forEach(row => row.style.display = ''); 
+                    });
+                }, 400); // 안정적 렌더링을 위한 버퍼 타임 부여
+            }
+
+            captureNext();
+
+        } catch (error) {
+            alert("실행 중 오류 발생: " + error.message);
+            allRows.forEach(row => row.style.display = '');
+        }
+    }
+function deleteAllParticipants() {
+    // 삭제 전 확인 메시지
+    if(confirm("정말로 모든 참가자 명단을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.")) {
+        // 1. 데이터 배열 비우기
+        participantList = [];
+        
+        // 2. 로컬 스토리지 데이터도 삭제
+        localStorage.removeItem("ddilcup4_members");
+        
+        // 3. (옵션) 팀 데이터도 같이 초기화하려면 아래 주석을 해제하세요
+        // teamData = {}; 
+        // saveAllToLocalStorage(); 
+
+        // 4. 화면 갱신
+        renderTable();
+        renderTeamGrid();
+        renderAllRoundPages();
+        
+        alert("모든 명단이 삭제되었습니다.");
+    }
+}
+function updateTier(idx, tierValue) {
+    participantList[idx].tier = tierValue; // 데이터 반영
+    saveAllToLocalStorage(); // 저장 함수 (기존에 쓰시던 이름으로 확인해주세요!)
+    
+    // 만약 티어페이지가 있다면 다시 그려줍니다.
+    if(typeof renderTierPage === 'function') {
+        renderTierPage();
+    }
+}
+// 티어별 페이지를 렌더링하는 함수 (기존 파일의 directAssignFromList 매커니즘 100% 연동)
+function renderTierPage() {
+    const container = document.getElementById('tier-container');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const tiers = ['1티어', '2티어', '3티어', '4티어'];
+
+    tiers.forEach(tier => {
+        const tierParticipants = participantList.filter(p => p.tier === tier);
+
+        let html = `
+            <div class="team-card">
+                <h4 style="border-bottom: 1px solid #ffb300; padding-bottom: 8px;">${tier} (${tierParticipants.length}명)</h4>
+                <div class="team-members-list" data-tier="${tier}" id="list-${tier}">
+        `;
+
+        if (tierParticipants.length === 0) {
+            html += `<div class="team-slot"><span style="color:#666">등록된 인원이 없습니다.</span></div>`;
+        } else {
+            // participantList 안에서 현재 참가자의 고유 index를 정확하게 추적하며 루프를 돕니다.
+            tierParticipants.forEach(p => {
+    const pIdx = participantList.findIndex(x => x.ingameId === p.ingameId);
+
+    // 1. 현재 teamData를 뒤져서 이 유저가 몇 팀 몇 번에 배정되어 있는지 실시간 추적
+    let myAssignedKey = ""; 
+    let teamLabel = ""; // 이름 옆에 표시될 텍스트
+    for (let t = 1; t <= 13; t++) {
+        for (let s = 0; s < 4; s++) {
+            if (teamData[t][s] && teamData[t][s].ingameId === p.ingameId) {
+                myAssignedKey = `${t}-${s}`;
+                teamLabel = `[${t}팀 ${s + 1}번]`; // 이름 옆에 출력될 형태
+            }
+        }
+    }
+
+    // 2. 드롭다운 옵션 생성 로직 (1팀 1번 ~ 13팀 4번)
+    let teamOptions = `<option value="">-- 팀 선택 --</option>`;
+    if (myAssignedKey !== "") {
+        teamOptions += `<option value="CLEAR" style="color: #ff4444; font-weight:bold;">❌ 배정 취소/해제</option>`;
+    }
+
+    for (let i = 1; i <= 13; i++) {
+        for (let slot = 0; slot < 4; slot++) {
+            const optionValue = `${i}-${slot}`;
+            const targetOccupant = teamData[i][slot];
+
+            if (targetOccupant) {
+                if (targetOccupant.ingameId === p.ingameId) {
+                    teamOptions += `<option value="${optionValue}" selected>${i}팀 ${slot + 1}번</option>`;
+                } else {
+                    teamOptions += `<option value="${optionValue}" disabled>${i}팀 ${slot + 1}번 (${targetOccupant.broadcastName})</option>`;
+                }
+            } else {
+                teamOptions += `<option value="${optionValue}">${i}팀 ${slot + 1}번</option>`;
+            }
+        }
+    }
+
+    // 3. HTML 카드 구조 결합
+    html += `
+        <div class="team-slot" data-id="${p.broadcastName}" style="cursor: grab; display: flex; flex-direction: column; gap: 5px; padding: 10px; border-bottom: 1px solid #333; width: 100%;">
+            <div style="font-weight: bold; font-size: 22px; color: #fff; text-align: left; display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                <span>${p.broadcastName}</span>
+                ${teamLabel !== "" ? `<span style="font-size: 20px; color: #ffb300; background-color: #241e12; padding: 1px 5px; border-radius: 3px; border: 1px solid #ffb300;">${teamLabel}</span>` : ""}
+            </div>
+            
+            <div style="font-size: 16px; font-weight: bold; text-align: left;">
+                일반: <span class="${getDmgClass(p.dmgNormal)}">${p.dmgNormal}</span> | 
+                경쟁: <span class="${getDmgClass(p.dmgRanked)}">${p.dmgRanked}</span>
+            </div>
+
+            <div style="display: flex; gap: 5px; margin-top: 5px; flex-direction: row; width: 100%;">
+                <select onchange="updateParticipantTier('${p.broadcastName}', this.value)" style="flex: 1; width: 50%; padding: 3px; height: 30px; background-color: #25292e; color: #fff; border: 1px solid #3d444b; border-radius: 4px;">
+                    ${['1티어', '2티어', '3티어', '4티어'].map(t => `<option value="${t}" ${p.tier === t ? 'selected' : ''}>${t}</option>`).join('')}
+                </select>
+                
+                <select onchange="directAssignFromList(${pIdx}, this.value); renderTierPage();" style="flex: 1; width: 50%; padding: 3px; height: 30px; background-color: #1e293b; color: #ffb300; font-weight: bold; border: 1px solid #ffb300; border-radius: 4px;">
+                    ${teamOptions}
+                </select>
+            </div>
+        </div>
+    `;
+});
+        }
+        html += `</div></div>`;
+        container.innerHTML += html;
+    });
+
+    // 드래그 기능 활성화
+    if (typeof Sortable !== 'undefined') {
+        document.querySelectorAll('.team-members-list').forEach(el => {
+            new Sortable(el, {
+                group: 'shared',
+                animation: 150,
+                onEnd: function (evt) {
+                    updateOrder();
+                }
+            });
+        });
+    }
+}
+// 티어 변경 시 호출되는 함수
+function updateParticipantTier(broadcastName, newTier) {
+    const p = participantList.find(x => x.broadcastName === broadcastName);
+    if (p) {
+        p.tier = newTier; // 데이터 반영
+        saveAllToLocalStorage(); // 변경사항 저장
+        renderTierPage(); // 화면 갱신
+        renderTable(); // 신청현황 테이블도 갱신
+    }
+}
+function updateOrder() {
+    const newOrder = [];
+    document.querySelectorAll('.team-members-list').forEach(list => {
+        const tier = list.getAttribute('data-tier');
+        const items = list.querySelectorAll('.team-slot');
+        
+        items.forEach(item => {
+            const name = item.getAttribute('data-id');
+            const p = participantList.find(x => x.broadcastName === name);
+            if (p) {
+                p.tier = tier; // 다른 티어로 옮겼을 경우 티어값 업데이트
+                newOrder.push(p);
+            }
+        });
+    });
+    
+    // 기존 participantList를 새 순서로 정렬
+    participantList.sort((a, b) => {
+        return newOrder.indexOf(a) - newOrder.indexOf(b);
+    });
+
+    saveAllToLocalStorage(); // 저장
+}
+function getDmgClass(dmg) {
+    const val = parseInt(dmg);
+    if (val < 100) return 'dmg-gray';
+    if (val < 200) return 'dmg-green';
+    if (val < 300) return 'dmg-yellow';
+    if (val < 400) return 'dmg-red';
+    return 'dmg-rainbow';
+}
+// 티어표 드롭다운 조작 시 신청현황의 진짜 원본 엘리먼트를 조종하여 완벽하게 상호 연동시키는 함수
+function forceOriginalTeamChange(broadcastName, selectedValue) {
+    let originalSelect = null;
+    
+    // 1. 신청현황 테이블 전체에서 이 참가자가 속한 행의 select 박스를 원격 추적합니다.
+    const allSelects = document.querySelectorAll('table select');
+    allSelects.forEach(select => {
+        const row = select.closest('tr');
+        if (row && row.textContent.includes(broadcastName)) {
+            originalSelect = select;
+        }
+    });
+
+    // 2. 신청현황 원본 select를 찾았다면 가상으로 변경 이벤트를 유도합니다.
+    if (originalSelect) {
+        originalSelect.value = selectedValue;
+        // 기존 파일에 내장되어 있던 정교한 저장/배치 시스템을 그대로 빌려와서 작동시킵니다!
+        originalSelect.dispatchEvent(new Event('change'));
+    } else {
+        // 백업 처리: 혹시 화면에 테이블이 완전히 없더라도 데이터 배열을 강제로 맞춥니다.
+        const p = participantList.find(x => x.broadcastName === broadcastName);
+        if (p) {
+            p.team = selectedValue;
+            p.teamSlot = selectedValue;
+            p.teamAssignment = selectedValue;
+            if(p.assignedTeam) p.assignedTeam = selectedValue;
+        }
+        if (typeof saveAllToLocalStorage === 'function') saveAllToLocalStorage();
+        if (typeof saveAll === 'function') saveAll();
+        if (typeof renderTable === 'function') renderTable();
+        if (typeof renderTeamList === 'function') renderTeamList();
+    }
+
+    // 3. 마지막으로 현재 보고 있는 티어표도 다시 그려 변경 사항을 즉시 반영합니다.
+    renderTierPage();
+}
+</script>
+
+</body>
+</html>
