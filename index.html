@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>띨띨즈 출석체크 명부 (Cloud Sync)</title>
+    <title>띨띨즈 출석체크 명부 (Cloud Sync v2)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght=300;400;500;600;700&family=Noto+Sans+KR:wght=300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -14,10 +14,10 @@
         .custom-scrollbar::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.05); border-radius: 999px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.15); border-radius: 999px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(0, 0, 0, 0.25); }
-        .loading-overlay { background: rgba(255,255,255,0.7); backdrop-blur: 2px; }
+        .loading-overlay { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(2px); }
     </style>
 </head>
-<body class="bg-slate-50 min-height-screen text-slate-800 transition-colors duration-200">
+<body class="bg-slate-50 min-h-screen text-slate-800 transition-colors duration-200">
 
 <div id="loading-spinner" class="fixed inset-0 loading-overlay flex flex-col items-center justify-center z-50 hidden">
     <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
@@ -48,7 +48,10 @@
         </div>
         
         <div class="flex flex-wrap gap-3" data-html2canvas-ignore="true">
-            <button onclick="openAddStudentModal()" class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition shadow-sm gap-2">
+            <button onclick="saveCloudData()" class="inline-flex items-center justify-center px-4 py-2 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition shadow-md gap-2 shadow-indigo-200">
+                <i class="fa-solid fa-cloud-arrow-up"></i> 구글 시트에 저장하기
+            </button>
+            <button onclick="openAddStudentModal()" class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 rounded-lg transition shadow-sm gap-2">
                 <i class="fa-solid fa-plus"></i> 학생 추가
             </button>
             <button onclick="confirmReset()" class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 rounded-lg transition shadow-sm gap-2">
@@ -106,7 +109,7 @@
 
     <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
         <div class="overflow-x-auto custom-scrollbar">
-            <table class="w-full text-left border-collapse min-w-[900px]">
+            <table class="w-full text-left border-collapse min-w-[1000px]">
                 <thead>
                     <tr id="table-header-row" class="bg-slate-50 border-b border-slate-100 text-slate-600 text-xs font-bold uppercase tracking-wider select-none"></tr>
                 </thead>
@@ -157,7 +160,7 @@
                 <i class="fa-solid fa-triangle-exclamation text-xl"></i>
             </div>
             <h3 class="text-lg font-bold text-slate-800">정말 출석률을 초기화하시겠습니까?</h3>
-            <p class="text-sm text-slate-500 mt-2">구글 시트에 동기화된 이번 달 출석 현황이 전부 지워집니다.</p>
+            <p class="text-sm text-slate-500 mt-2">화면의 이번 달 출석 현황이 전부 비워집니다. [구글 시트에 저장하기]를 누르기 전까지 시트에는 반영되지 않습니다.</p>
         </div>
         <div class="mt-6 flex justify-center gap-3">
             <button onclick="closeResetModal()" class="px-4 py-2 border border-slate-200 hover:bg-slate-50 text-slate-600 rounded-lg text-sm">취소</button>
@@ -169,7 +172,7 @@
 <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2"></div>
 
 <script>
-    // ⚠️ [필수수정] 여기에 본인의 구글 스프레드시트 배포 웹앱 URL 주소를 붙여넣어 주세요!
+    // ⚠️ [필수수정]여기에 본인의 구글 스프레드시트 배포 웹앱 URL 주소를 붙여넣어 주세요!
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzwZTnZQlYhAmtmSAyDg9Ub_7VvJK0Bjb8cS3Ht-rJLlxUvfyuZVppQKxhtUpWfaaU/exec";
 
     const TOTAL_DAYS = 12;
@@ -186,37 +189,38 @@
         renderHeader();
         fetchCloudData();
         document.getElementById("target-notice-text").innerHTML = 
-            `* 목표 수료 기준: <b>${REQUIRED_DAYS}일 이상</b> 출석 시 100% 달성 완료! (구글 시트 실시간 자동 동기화 버전)`;
+            `* 목표 수료 기준: <b>${REQUIRED_DAYS}일 이상</b> 출석 시 100% 달성 완료! (원하는 만큼 체크 후 꼭 우측 상단의 <b>[구글 시트에 저장하기]</b> 버튼을 눌러주세요!)`;
     };
 
     function showLoading(show) {
         document.getElementById("loading-spinner").style.display = show ? "flex" : "none";
     }
 
-    // 구글 시트에서 데이터 가져오기
+    // 구글 시트에서 데이터 로드하기
     function fetchCloudData() {
         showLoading(true);
         fetch(`${SCRIPT_URL}?month=${state.currentMonth}`)
             .then(res => res.json())
             .then(data => {
-                state.students = data.students;
+                // 구조 매칭 정상화
+                state.students = data.students || [];
                 if(data.allMonths) state.allMonths = data.allMonths;
                 renderMonthSelector();
                 render();
             })
             .catch(err => {
                 console.error(err);
-                showToast("구글 데이터 불러오기 실패", "warning");
+                showToast("구글 시트 데이터를 가져오지 못했습니다.", "warning");
             })
             .finally(() => showLoading(false));
     }
 
-    // 구글 시트에 현재 상태 저장하기
+    // 구글 시트에 현재 화면 데이터 전부 저장하기 (수동 작동)
     function saveCloudData() {
         showLoading(true);
         fetch(SCRIPT_URL, {
             method: "POST",
-            mode: "no-cors", // CORS 제한 우회
+            mode: "no-cors",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 action: "saveAll",
@@ -225,7 +229,7 @@
             })
         })
         .then(() => {
-            showToast("구글 스프레드시트에 저장 완료!", "success");
+            showToast("구글 스프레드시트에 저장되었습니다! 💾", "success");
             render();
         })
         .catch(err => {
@@ -251,8 +255,12 @@
     }
 
     function switchMonth(selectedMonth) {
-        state.currentMonth = selectedMonth;
-        fetchCloudData();
+        if(confirm("다른 월로 이동하시겠습니까? 저장하지 않은 출석 정보는 사라집니다. 이동 전 반드시 [구글 시트에 저장하기]를 눌러주세요.")) {
+            state.currentMonth = selectedMonth;
+            fetchCloudData();
+        } else {
+            renderMonthSelector();
+        }
     }
 
     function openNewMonthModal() {
@@ -272,7 +280,7 @@
         state.currentMonth = val;
         closeNewMonthModal();
         saveCloudData(); 
-        setTimeout(() => { fetchCloudData(); }, 1500); // 시트 생성 시간 대기 후 갱신
+        setTimeout(() => { fetchCloudData(); }, 1500);
     }
 
     function formatMonthLabel(monthStr) {
@@ -341,17 +349,25 @@
         document.getElementById("stat-warn-count").innerText = `${warn}명`;
     }
 
+    // 버튼 광속 클릭 해결 로직! (화면만 즉시 갱신)
     function toggleCell(studentId, sessionIdx) {
         const student = state.students.find(s => s.id === studentId);
         if (student) {
             student.attendance[sessionIdx] = !student.attendance[sessionIdx];
-            saveCloudData();
+            render(); // 버벅임 없이 즉시 리렌더링
         }
     }
 
     function handleSearch(val) { state.searchQuery = val; render(); }
-    function openAddStudentModal() { document.getElementById("add-student-modal").style.display = "flex"; document.getElementById("new-student-name").focus(); }
-    function closeAddStudentModal() { document.getElementById("add-student-modal").style.display = "none"; document.getElementById("new-student-name").value = ""; }
+    
+    function openAddStudentModal() { 
+        document.getElementById("add-student-modal").style.display = "flex"; 
+        document.getElementById("new-student-name").focus(); 
+    }
+    function closeAddStudentModal() { 
+        document.getElementById("add-student-modal").style.display = "none"; 
+        document.getElementById("new-student-name").value = ""; 
+    }
 
     function saveStudent() {
         const name = document.getElementById("new-student-name").value.trim();
@@ -359,12 +375,14 @@
         const newId = state.students.length > 0 ? Math.max(...state.students.map(s => s.id)) + 1 : 1;
         state.students.push({ id: newId, name: name, attendance: Array(TOTAL_DAYS).fill(false) });
         closeAddStudentModal();
-        saveCloudData();
+        render(); // 화면에 즉시 추가
     }
 
     function deleteStudent(id) {
-        state.students = state.students.filter(s => s.id !== id);
-        saveCloudData();
+        if(confirm("이 학생을 명단에서 삭제하시겠습니까? (구글 시트 반영은 저장 버튼을 누른 후 적용됩니다.)")) {
+            state.students = state.students.filter(s => s.id !== id);
+            render();
+        }
     }
 
     function confirmReset() { document.getElementById("reset-confirm-modal").style.display = "flex"; }
@@ -372,11 +390,11 @@
     function resetAttendance() {
         state.students.forEach(s => s.attendance = Array(TOTAL_DAYS).fill(false));
         closeResetModal();
-        saveCloudData();
+        render();
     }
 
     function captureAsImage() {
-        showToast("이미지 캡처 중...", "info");
+        showToast("이미지 캡처를 시작합니다...", "info");
         html2canvas(document.querySelector('.max-w-7xl'), { scale: 2, backgroundColor: "#f8fafc" }).then(canvas => {
             const a = document.createElement('a');
             a.download = `출석체크_보고서_${state.currentMonth}.png`;
