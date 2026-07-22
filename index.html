@@ -172,7 +172,6 @@
 <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2"></div>
 
 <script>
-    // ⚠️ [필수수정]여기에 본인의 구글 스프레드시트 배포 웹앱 URL 주소를 붙여넣어 주세요!
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzwZTnZQlYhAmtmSAyDg9Ub_7VvJK0Bjb8cS3Ht-rJLlxUvfyuZVppQKxhtUpWfaaU/exec";
 
     const TOTAL_DAYS = 12;
@@ -185,26 +184,55 @@
         searchQuery: ""
     };
 
+    let activeDates = []; // 현재 월의 화, 목, 토 날짜 목록 저장 배열
+
     window.onload = function() {
-        renderHeader();
         fetchCloudData();
         document.getElementById("target-notice-text").innerHTML = 
             `* 목표 수료 기준: <b>${REQUIRED_DAYS}일 이상</b> 출석 시 100% 달성 완료! (원하는 만큼 체크 후 꼭 우측 상단의 <b>[구글 시트에 저장하기]</b> 버튼을 눌러주세요!)`;
     };
 
+    // 선택된 YYYY-MM 값에 따라 해당 월의 화, 목, 토 날짜를 자동 생성하는 함수
+    function calculateTueThuSatDates(monthStr) {
+        if (!monthStr || !monthStr.includes("-")) return [];
+        const [yearStr, mStr] = monthStr.split("-");
+        const year = parseInt(yearStr, 10);
+        const month = parseInt(mStr, 10) - 1; // JS 월은 0부터 시작
+
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const dates = [];
+        const weekNames = ["일", "월", "화", "수", "목", "금", "토"];
+
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dateObj = new Date(year, month, day);
+            const dayOfWeek = dateObj.getDay(); // 2: 화, 4: 목, 6: 토
+            if (dayOfWeek === 2 || dayOfWeek === 4 || dayOfWeek === 6) {
+                dates.push({
+                    month: month + 1,
+                    day: day,
+                    week: weekNames[dayOfWeek]
+                });
+            }
+        }
+        return dates;
+    }
+
     function showLoading(show) {
         document.getElementById("loading-spinner").style.display = show ? "flex" : "none";
     }
 
-    // 구글 시트에서 데이터 로드하기
     function fetchCloudData() {
         showLoading(true);
         fetch(`${SCRIPT_URL}?month=${state.currentMonth}`)
             .then(res => res.json())
             .then(data => {
-                // 구조 매칭 정상화
                 state.students = data.students || [];
                 if(data.allMonths) state.allMonths = data.allMonths;
+                
+                // 월 변경/로드 시 해당 월의 화/목/토 날짜 계산 및 헤더 갱신
+                activeDates = calculateTueThuSatDates(state.currentMonth);
+                renderHeader();
+                
                 renderMonthSelector();
                 render();
             })
@@ -215,7 +243,6 @@
             .finally(() => showLoading(false));
     }
 
-    // 구글 시트에 현재 화면 데이터 전부 저장하기 (수동 작동)
     function saveCloudData() {
         showLoading(true);
         fetch(SCRIPT_URL, {
@@ -289,12 +316,22 @@
         return `${year}년 ${month}월`;
     }
 
+    // 헤더에 실제 날짜(예: 7/2(화))로 표시되도록 수정
     function renderHeader() {
         const headerRow = document.getElementById("table-header-row");
         let headers = `<th class="py-4 px-4 text-center w-12">번호</th><th class="py-4 px-6 w-44">이름</th>`;
-        const weekDays = ["화", "목", "토"];
-        for (let d = 1; d <= TOTAL_DAYS; d++) {
-            headers += `<th class="py-4 px-2 text-center w-14">D${d}(${weekDays[(d - 1) % 3]})</th>`;
+        const defaultWeek = ["화", "목", "토"];
+
+        for (let d = 0; d < TOTAL_DAYS; d++) {
+            let label = "";
+            if (activeDates && activeDates[d]) {
+                // 해당 월의 실제 날짜와 요일 표기 (예: 7/2(화))
+                label = `${activeDates[d].month}/${activeDates[d].day}(${activeDates[d].week})`;
+            } else {
+                // 해당 월의 화/목/토 횟수가 12회 미만일 경우 기존 기본 라벨 제공
+                label = `D${d + 1}(${defaultWeek[d % 3]})`;
+            }
+            headers += `<th class="py-4 px-2 text-center whitespace-nowrap min-w-[3.5rem]">${label}</th>`;
         }
         headers += `<th class="py-4 px-4 text-center w-20">출석수</th><th class="py-4 px-6 text-center w-24">달성률</th><th class="py-4 px-4 text-center w-16" data-html2canvas-ignore="true">삭제</th>`;
         headerRow.innerHTML = headers;
@@ -349,12 +386,11 @@
         document.getElementById("stat-warn-count").innerText = `${warn}명`;
     }
 
-    // 버튼 광속 클릭 해결 로직! (화면만 즉시 갱신)
     function toggleCell(studentId, sessionIdx) {
         const student = state.students.find(s => s.id === studentId);
         if (student) {
             student.attendance[sessionIdx] = !student.attendance[sessionIdx];
-            render(); // 버벅임 없이 즉시 리렌더링
+            render();
         }
     }
 
@@ -375,7 +411,7 @@
         const newId = state.students.length > 0 ? Math.max(...state.students.map(s => s.id)) + 1 : 1;
         state.students.push({ id: newId, name: name, attendance: Array(TOTAL_DAYS).fill(false) });
         closeAddStudentModal();
-        render(); // 화면에 즉시 추가
+        render();
     }
 
     function deleteStudent(id) {
@@ -403,9 +439,13 @@
         });
     }
 
+    // CSV 저장 시에도 날짜 표기 반영
     function exportToCSV() {
         let csv = "\uFEFF번호,이름,";
-        for(let d=1; d<=TOTAL_DAYS; d++) csv += `D${d},`;
+        for(let d=0; d<TOTAL_DAYS; d++) {
+            let label = (activeDates && activeDates[d]) ? `${activeDates[d].month}/${activeDates[d].day}(${activeDates[d].week})` : `D${d+1}`;
+            csv += `${label},`;
+        }
         csv += "총 출석일수,달성률\n";
         state.students.forEach((s, i) => {
             const checks = s.attendance.map(v => v ? "O" : "X").join(",");
